@@ -1,5 +1,7 @@
 package com.tshirtmart.trilo.Entities;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,17 +18,22 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long userId;
 	
+
 	private String userName;
 	
 	@Column(unique = true)
 	private String userEmail;
 	
+	
 	private String userPassword;
 	
-	private String userRole;
 	
+	private List<String> userRole;
+	
+
 	private String userPhone;
 	
+
 	private String userAddress;
 	
 	
@@ -35,8 +42,9 @@ public class User {
 		super();
 	}
 
-	public User(long userId, String userName, String userEmail, String userPassword, String userRole, String userPhone,
-			String userAddress) {
+
+	public User(long userId, String userName, String userEmail, String userPassword, List<String> userRole,
+			String userPhone, String userAddress) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
@@ -79,13 +87,17 @@ public class User {
 		this.userPassword = userPassword;
 	}
 
-	public String getUserRole() {
+
+
+	public List<String> getUserRole() {
 		return userRole;
 	}
 
-	public void setUserRole(String userRole) {
+
+	public void setUserRole(List<String> userRole) {
 		this.userRole = userRole;
 	}
+
 
 	public String getUserPhone() {
 		return userPhone;

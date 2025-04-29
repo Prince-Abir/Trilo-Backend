@@ -1,38 +1,70 @@
 package com.tshirtmart.trilo.ServiceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.tshirtmart.trilo.Dao.UserRepository;
+import com.tshirtmart.trilo.DTO.LoginRequestDTO;
+import com.tshirtmart.trilo.DTO.UserDTO;
 import com.tshirtmart.trilo.Entities.LoginRequest;
 import com.tshirtmart.trilo.Entities.User;
+import com.tshirtmart.trilo.Repository.UserRepository;
 import com.tshirtmart.trilo.Services.UserService;
 
-@Component
+
+@Service
 public class UserServiceImpl implements UserService {
+	
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	
+    // Convert Entity to DTO
+    private UserDTO convertToDTO(User user) {
+        return new UserDTO(user.getUserId(), user.getUserName(), user.getUserEmail(), user.getUserPassword(),user.getUserRole(),user.getUserPhone(),user.getUserAddress());
+    }
+
+    // Convert DTO to Entity
+    private User convertToEntity(UserDTO userDTO) {
+        return new User(userDTO.getUserId(), userDTO.getUserName(), userDTO.getUserEmail(),userDTO.getUserPassword(),userDTO.getUserRole(),userDTO.getUserPhone(),userDTO.getUserAddress());
+    }
 
 	@Override
-	public User addUser(User user) {
-		userRepository.save(user);
-		return user;
+	public UserDTO addUser(UserDTO userDTO) {
+		
+		
+		User user = convertToEntity(userDTO);
+		User savedUser = userRepository.save(user);
+		
+		return convertToDTO(savedUser);
+		
+	}
+	
+	@Override
+	public UserDTO getUser(long userId) {
+		User savedUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("user not found!"));
+	
+		return convertToDTO(savedUser);
 	}
 
-	@Override
-	public User getUser(long userId) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("user not found!"));
-		return user;
-	}
+
 
 	@Override
-	public List<User> getAllUser() {
+	public List<UserDTO> getAllUser() {
 		List<User> users = userRepository.findAll();
-		return users;
+		List<UserDTO> userDTO = new ArrayList<>();
+		
+		users.forEach(user->{
+			
+			userDTO.add(convertToDTO(user));
+			
+		});
+		return userDTO;
 	}
 
 	@Override
@@ -42,36 +74,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User updateUser(long userId, User user) {
-//		Optional<User> oldUser = userRepository.findById(userId);
-//		List<User> users = userRepository.findAll();
-//		
-//		while(users.iterator().hasNext()) {
-//			
-//			users.get(users)
-//			
-//			
-//			
-//			users.iterator().next();
-//			
-//			
-//		}
+	public UserDTO updateUser(long userId, UserDTO userDTO) {
+
 		return null;
 	}
 
+
 	@Override
-	public boolean getUserByEmailAndPassword(LoginRequest loginRequest) {
-		List<User> users = userRepository.findAll();
-		User u = users.stream().filter(user ->
-
-		user.getUserEmail().equals(loginRequest.getUserEmail()) && user.getUserPassword().equals(loginRequest.getUserPassword())).findFirst()
-				.orElse(null);
-
-		if (u != null) {
-			return true;
-		}
-
-		return false;
+	public boolean findByUserEmailAndUserPassword(LoginRequestDTO loginRequestDTO) {
+		 return userRepository.existsByUserEmailAndUserPassword(loginRequestDTO.getUserEmail(), loginRequestDTO.getUserPassword());
 	}
 
 }

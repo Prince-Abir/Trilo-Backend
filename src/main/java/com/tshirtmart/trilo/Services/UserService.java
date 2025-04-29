@@ -5,27 +5,29 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.tshirtmart.trilo.Entities.LoginRequest;
-import com.tshirtmart.trilo.Entities.User;
+import com.tshirtmart.trilo.DTO.LoginRequestDTO;
+import com.tshirtmart.trilo.DTO.UserDTO;
 
 @Service
 public interface UserService {
 	
-	public User addUser(User user);
+	public UserDTO addUser(UserDTO userDTO);
 	
 	
-	public User getUser(long userId);
-	
-	public boolean getUserByEmailAndPassword(LoginRequest loginRequest);
+	public UserDTO getUser(long userId);
 	
 	
-	public List<User> getAllUser();
+	
+	public boolean findByUserEmailAndUserPassword(LoginRequestDTO loginRequestDTO);
+	
+	
+	public List<UserDTO> getAllUser();
 	
 	
 	public boolean deleteUser(long userId);
 	
 	
-	public User updateUser(long userId, User user);
+	public UserDTO updateUser(long userId, UserDTO userDTO);
 	
 
 }
