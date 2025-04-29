@@ -23,3 +23,9 @@
 5. Login (POST Request)
 
 ![log](https://github.com/user-attachments/assets/e857e804-fd45-420a-9ec0-912f4a4a851c)
+
+
+6. DB
+
+![trilo db](https://github.com/user-attachments/assets/f9b03e8c-b11f-4f01-86d4-292e3d5ab1e1)
+
