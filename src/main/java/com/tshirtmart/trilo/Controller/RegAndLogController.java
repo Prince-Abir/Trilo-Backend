@@ -1,5 +1,7 @@
 package com.tshirtmart.trilo.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -35,15 +37,20 @@ public class RegAndLogController {
 		UserDTO savedDTO = userServiceImpl.addUser(userDTO);
 		return savedDTO;
 	
-		
 	}
 	
 	@PostMapping(path  = "/login")
 	public boolean Login(@RequestBody LoginRequestDTO loginRequestDTO) {
 		System.out.println(loginRequestDTO);
 		
-		return userServiceImpl.findByUserEmailAndUserPassword(loginRequestDTO);
+		return userServiceImpl.findByUserEmail(loginRequestDTO);
 		
+	}
+	
+	@GetMapping(path = "/users")
+	public List<UserDTO> getUsers(){
+		
+		return userServiceImpl.getAllUser();
 	}
 
 

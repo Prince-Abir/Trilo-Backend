@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.tshirtmart.trilo.DTO.LoginRequestDTO;
 import com.tshirtmart.trilo.DTO.UserDTO;
+import com.tshirtmart.trilo.Entities.User;
 
 @Service
 public interface UserService {
@@ -17,8 +18,7 @@ public interface UserService {
 	public UserDTO getUser(long userId);
 	
 	
-	
-	public boolean findByUserEmailAndUserPassword(LoginRequestDTO loginRequestDTO);
+	public boolean findByUserEmail(LoginRequestDTO loginRequestDTO);
 	
 	
 	public List<UserDTO> getAllUser();
@@ -29,5 +29,6 @@ public interface UserService {
 	
 	public UserDTO updateUser(long userId, UserDTO userDTO);
 	
+
 
 }

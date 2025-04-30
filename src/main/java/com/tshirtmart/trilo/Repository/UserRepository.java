@@ -19,7 +19,10 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	
 	//boolean findByUserEmailAndUserPassword(String userEmail,String userPassword);
 	
-	boolean existsByUserEmailAndUserPassword(String userEmail, String userPassword);
+	
+	User findByUserEmail(String userEmail);
+	
+	
 	
 	@Query(value = "SELECT * FROM users WHERE user_name = :userName", nativeQuery = true)
 	User findByUsername(@Param("userName") String userName);

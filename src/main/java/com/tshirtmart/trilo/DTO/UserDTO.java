@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.FetchType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
@@ -27,7 +30,7 @@ public class UserDTO {
 	@Length(min = 6,message = "Password length should be at leaset 6")
 	private String userPassword;
 	
-	@NotBlank(message = "Please select a userRole")
+	@NotEmpty(message = "Please select a userRole")
 	private List<String> userRole;
 	
 	@Pattern(regexp = "^(?:\\+8801|8801|01)[3-9]\\d{8}$", message = "Invalid Bangladeshi phone number format")
