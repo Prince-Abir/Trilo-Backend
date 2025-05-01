@@ -14,20 +14,18 @@ import com.tshirtmart.trilo.CustomUserDetails;
 import com.tshirtmart.trilo.Repository.UserRepository;
 
 @Component
-public class UserDetailsServiceImpl implements UserDetailsService{
-	
+public class UserDetailsServiceImpl implements UserDetailsService {
+
 	@Autowired
 	private UserRepository userRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-		
-		com.tshirtmart.trilo.Entities.User user = userRepository.findByUsername(userName);
-		
-		
-		if(Objects.isNull(user)) {
-			
-			//Approach 1 ( Limited Access of user data while doing Authenticate for a user)
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+		com.tshirtmart.trilo.Entities.User user = userRepository.findByUserEmail(username);
+		if (Objects.isNull(user)) {
+
+			// Approach 1 ( Limited Access of user data while doing Authenticate for a user)
 //			UserDetails userDetails = User.builder()
 //			.username(user.getUserName())
 //			.password(user.getUserPassword())
@@ -35,13 +33,12 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 //			.build();
 //			
 //			return userDetails;
-			
+
 			System.out.println("User not found!");
 			throw new UsernameNotFoundException("User not found");
-			
-			
+
 		}
-		
+
 		return new CustomUserDetails(user);
 	}
 

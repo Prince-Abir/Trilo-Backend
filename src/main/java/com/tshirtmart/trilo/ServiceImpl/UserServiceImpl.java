@@ -6,6 +6,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -15,20 +19,31 @@ import com.tshirtmart.trilo.DTO.UserDTO;
 import com.tshirtmart.trilo.Entities.LoginRequest;
 import com.tshirtmart.trilo.Entities.User;
 import com.tshirtmart.trilo.Repository.UserRepository;
+import com.tshirtmart.trilo.Services.JwtService;
 import com.tshirtmart.trilo.Services.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+	private final AuthenticationProvider authenticationProvider;
+
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	private final AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private JwtService jwtService;
 
 	@Autowired
 	private UserRepository userRepository;
 
-	public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
+	public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository,
+			AuthenticationManager authenticationManager, AuthenticationProvider authenticationProvider) {
 		super();
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.userRepository = userRepository;
+		this.authenticationManager = authenticationManager;
+		this.authenticationProvider = authenticationProvider;
 	}
 
 	// Convert Entity to DTO
@@ -88,14 +103,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean findByUserEmail(LoginRequestDTO loginRequestDTO) {
-		
-		User user = userRepository.findByUserEmail(loginRequestDTO.getUserEmail());
-		if(Objects.nonNull(user)) {
-			return bCryptPasswordEncoder.matches(loginRequestDTO.getUserPassword(), user.getUserPassword());
-		}
-		return false;
-	}
+	public String findByUserEmail(LoginRequestDTO loginRequestDTO) {
 
+		Authentication authenticate = authenticationManager.authenticate(
+
+				new UsernamePasswordAuthenticationToken(loginRequestDTO.getUserEmail(),
+						loginRequestDTO.getUserPassword())
+
+		);
+
+//		User user = userRepository.findByUserEmail(loginRequestDTO.getUserEmail());
+		if (authenticate.isAuthenticated()) {
+			
+			
+			return jwtService.generateToken(loginRequestDTO);
+		}
+		return "failure";
+	}
 
 }

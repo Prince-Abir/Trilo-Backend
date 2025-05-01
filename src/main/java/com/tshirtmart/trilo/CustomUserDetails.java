@@ -9,15 +9,17 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.tshirtmart.trilo.Entities.User;
+
 public class CustomUserDetails implements UserDetails {
 	
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final com.tshirtmart.trilo.Entities.User user;
+	private final User user;
 	
 
-	public CustomUserDetails(com.tshirtmart.trilo.Entities.User user) {
+	public CustomUserDetails(User user) {
 		super();
 		this.user = user;
 	}
@@ -44,7 +46,7 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return user.getUserName();
+		return user.getUserEmail();
 	}
 
 	@Override

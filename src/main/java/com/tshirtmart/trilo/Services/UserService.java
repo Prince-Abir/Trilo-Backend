@@ -18,7 +18,7 @@ public interface UserService {
 	public UserDTO getUser(long userId);
 	
 	
-	public boolean findByUserEmail(LoginRequestDTO loginRequestDTO);
+	public String findByUserEmail(LoginRequestDTO loginRequestDTO);
 	
 	
 	public List<UserDTO> getAllUser();

@@ -40,7 +40,7 @@ public class RegAndLogController {
 	}
 	
 	@PostMapping(path  = "/login")
-	public boolean Login(@RequestBody LoginRequestDTO loginRequestDTO) {
+	public String Login(@RequestBody LoginRequestDTO loginRequestDTO) {
 		System.out.println(loginRequestDTO);
 		
 		return userServiceImpl.findByUserEmail(loginRequestDTO);
