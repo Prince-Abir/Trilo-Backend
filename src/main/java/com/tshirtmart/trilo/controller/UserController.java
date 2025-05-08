@@ -1,4 +1,4 @@
-package com.tshirtmart.trilo.Controller;
+package com.tshirtmart.trilo.controller;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tshirtmart.trilo.DTO.UserDTO;
-import com.tshirtmart.trilo.ServiceImpl.UserServiceImpl;
+import com.tshirtmart.trilo.dto.UserDTO;
+import com.tshirtmart.trilo.serviceImpl.UserServiceImpl;
 
 @RestController
 @RequestMapping("/trilo")

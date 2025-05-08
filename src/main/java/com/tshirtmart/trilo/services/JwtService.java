@@ -1,4 +1,4 @@
-package com.tshirtmart.trilo.Services;
+package com.tshirtmart.trilo.services;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -13,7 +13,7 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.tshirtmart.trilo.DTO.LoginRequestDTO;
+import com.tshirtmart.trilo.dto.LoginRequestDTO;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;

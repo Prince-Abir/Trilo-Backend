@@ -1,4 +1,4 @@
-package com.tshirtmart.trilo.Services;
+package com.tshirtmart.trilo.services;
 
 import java.util.Objects;
 
@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.tshirtmart.trilo.CustomUserDetails;
-import com.tshirtmart.trilo.Repository.UserRepository;
+import com.tshirtmart.trilo.repository.UserRepository;
 
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -20,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		com.tshirtmart.trilo.Entities.User user = userRepository.findByUserEmail(username);
+		com.tshirtmart.trilo.entities.User user = userRepository.findByUserEmail(username);
 		if (Objects.isNull(user)) {
 
 			// Approach 1 ( Limited Access of user data while doing Authenticate for a user)

@@ -1,4 +1,4 @@
-package com.tshirtmart.trilo.Exceptions;
+package com.tshirtmart.trilo.exceptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,16 +47,29 @@ public class ApplicationExceptionHandler extends Exception {
 	}
 
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(UserNotFoundException.class)
 	public Map<String,String> userNotFound(UserNotFoundException ex){
 
 		Map<String, String> errors = new HashMap<>();
-
 		errors.put("error1",ex.getMessage());
+		return errors;
 
+	}
+	
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(ProductNotFoundException.class)
+	public Map<String,String> ProductNotFound(ProductNotFoundException ex){
+
+		Map<String, String> errors = new HashMap<>();
+		errors.put("error1",ex.getMessage());
 		return errors;
 
 
 	}
+	
+	
+	
+	
+	
 }

@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.tshirtmart.trilo.Entities.User;
+import com.tshirtmart.trilo.entities.User;
 
 public class CustomUserDetails implements UserDetails {
 

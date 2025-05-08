@@ -1,4 +1,4 @@
-package com.tshirtmart.trilo.Entities;
+package com.tshirtmart.trilo.entities;
 
 import java.util.List;
 

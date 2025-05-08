@@ -1,11 +1,11 @@
-package com.tshirtmart.trilo.Services;
+package com.tshirtmart.trilo.services;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.tshirtmart.trilo.DTO.LoginRequestDTO;
-import com.tshirtmart.trilo.DTO.UserDTO;
+import com.tshirtmart.trilo.dto.LoginRequestDTO;
+import com.tshirtmart.trilo.dto.UserDTO;
 
 @Service
 public interface UserService {

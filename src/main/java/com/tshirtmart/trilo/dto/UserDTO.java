@@ -1,4 +1,4 @@
-package com.tshirtmart.trilo.DTO;
+package com.tshirtmart.trilo.dto;
 
 import java.io.Serializable;
 import java.util.List;

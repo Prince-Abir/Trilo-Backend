@@ -1,4 +1,4 @@
-package com.tshirtmart.trilo.ServiceImpl;
+package com.tshirtmart.trilo.serviceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +11,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.tshirtmart.trilo.DTO.LoginRequestDTO;
-import com.tshirtmart.trilo.DTO.UserDTO;
-import com.tshirtmart.trilo.Entities.User;
-import com.tshirtmart.trilo.Exceptions.UserNotFoundException;
-import com.tshirtmart.trilo.Repository.UserRepository;
-import com.tshirtmart.trilo.Services.JwtService;
-import com.tshirtmart.trilo.Services.UserService;
+import com.tshirtmart.trilo.dto.LoginRequestDTO;
+import com.tshirtmart.trilo.dto.UserDTO;
+import com.tshirtmart.trilo.entities.User;
+import com.tshirtmart.trilo.exceptions.UserNotFoundException;
+import com.tshirtmart.trilo.repository.UserRepository;
+import com.tshirtmart.trilo.services.JwtService;
+import com.tshirtmart.trilo.services.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {

@@ -11,8 +11,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.tshirtmart.trilo.Services.JwtService;
-import com.tshirtmart.trilo.Services.UserDetailsServiceImpl;
+import com.tshirtmart.trilo.services.JwtService;
+import com.tshirtmart.trilo.services.UserDetailsServiceImpl;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

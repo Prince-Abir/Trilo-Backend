@@ -1,4 +1,4 @@
-package com.tshirtmart.trilo.Controller;
+package com.tshirtmart.trilo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tshirtmart.trilo.DTO.LoginRequestDTO;
-import com.tshirtmart.trilo.DTO.UserDTO;
-//import org.springframework.web.bind.annotation.RestController;
-import com.tshirtmart.trilo.ServiceImpl.UserServiceImpl;
+import com.tshirtmart.trilo.dto.LoginRequestDTO;
+import com.tshirtmart.trilo.dto.UserDTO;
+import com.tshirtmart.trilo.serviceImpl.UserServiceImpl;
 
 import jakarta.validation.Valid;
 
