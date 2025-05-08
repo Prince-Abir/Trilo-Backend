@@ -2,7 +2,6 @@ package com.tshirtmart.trilo.security;
 
 import java.io.IOException;
 
-import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,12 +43,12 @@ public class JwtFilter extends OncePerRequestFilter {
 		if (header != null && header.startsWith("Bearer ")) {
 			token = header.substring(7);
 			userEmail = jwtService.extractUserEmail(token);
-		
-			
+
+
 		}
 
 		if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			
+
 			UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
 
 			//UserDetails userDetails = context.getBean(UserDetailsServiceImpl.class).loadUserByUsername(userEmail);

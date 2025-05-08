@@ -1,6 +1,5 @@
 package com.tshirtmart.trilo.Services;
 
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
@@ -29,13 +28,13 @@ public class JwtService {
 
 	public JwtService() {
 		try {
-			
+
 			KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
 			SecretKey sk = keyGen.generateKey();
 			this.secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-			
+
 		} catch (NoSuchAlgorithmException e) {
-			
+
 			e.printStackTrace();
 		}
 	}
@@ -54,7 +53,7 @@ public class JwtService {
 				.compact();
 
 	}
-	
+
 	public String getSecretKey() {
 		return secretKey;
 	}
@@ -65,16 +64,16 @@ public class JwtService {
 	}
 
 
-	
+
 	public String extractUserEmail(String token) {
-		
+
 		return extractClaims(token,Claims::getSubject);
 	}
-	
+
 	private <T> T extractClaims(String token, Function<Claims,T> claimResolver) {
 		Claims claims = extractAllClaims(token);
 		return claimResolver.apply(claims);
-		
+
 	}
 
     private Claims extractAllClaims(String token) {
@@ -83,17 +82,17 @@ public class JwtService {
     }
 
 	public boolean validateToken(String token, UserDetails userDetails) {
-		
+
 		String userEmail = extractUserEmail(token);
-	
+
 		return (userEmail.equals(userDetails.getUsername()) && !isTokenExpired(token));
-	
+
 	}
 
 	private boolean isTokenExpired(String token) {
-		
+
 		return extractExpiration(token).before(new Date(System.currentTimeMillis()));
-	
+
 	}
 
 	private Date extractExpiration(String token) {

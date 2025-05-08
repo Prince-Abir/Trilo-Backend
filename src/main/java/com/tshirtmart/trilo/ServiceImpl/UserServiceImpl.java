@@ -3,21 +3,18 @@ package com.tshirtmart.trilo.ServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.tshirtmart.trilo.DTO.LoginRequestDTO;
 import com.tshirtmart.trilo.DTO.UserDTO;
-import com.tshirtmart.trilo.Entities.LoginRequest;
 import com.tshirtmart.trilo.Entities.User;
+import com.tshirtmart.trilo.Exceptions.UserNotFoundException;
 import com.tshirtmart.trilo.Repository.UserRepository;
 import com.tshirtmart.trilo.Services.JwtService;
 import com.tshirtmart.trilo.Services.UserService;
@@ -25,31 +22,32 @@ import com.tshirtmart.trilo.Services.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-	private final AuthenticationProvider authenticationProvider;
-
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final UserRepository userRepository;
 
-	private final AuthenticationManager authenticationManager;
-	
 	@Autowired
 	private JwtService jwtService;
 
 	@Autowired
-	private UserRepository userRepository;
+	private RedisTemplate<String, Object> redisTemplate;
 
-	public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository,
-			AuthenticationManager authenticationManager, AuthenticationProvider authenticationProvider) {
-		super();
+	@Autowired
+	private CacheManager cacheManager;
+
+	public final String KEY = "UserList";
+
+	@Autowired
+	public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.userRepository = userRepository;
-		this.authenticationManager = authenticationManager;
-		this.authenticationProvider = authenticationProvider;
 	}
 
 	// Convert Entity to DTO
 	private UserDTO convertToDTO(User user) {
-		return new UserDTO(user.getUserId(), user.getUserName(), user.getUserEmail(), user.getUserPassword(),
-				user.getUserRole(), user.getUserPhone(), user.getUserAddress());
+		List<String> roles = user.getUserRole() != null ? new ArrayList<>(user.getUserRole()) : new ArrayList<>();
+
+		return new UserDTO(user.getUserId(), user.getUserName(), user.getUserEmail(), user.getUserPassword(), roles,
+				user.getUserPhone(), user.getUserAddress());
 	}
 
 	// Convert DTO to Entity
@@ -61,64 +59,146 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO addUser(UserDTO userDTO) {
 
-		User user = convertToEntity(userDTO);
-		String pass = bCryptPasswordEncoder.encode(user.getUserPassword());
-		user.setUserPassword(pass);
-		User savedUser = userRepository.save(user);
+		String pass = bCryptPasswordEncoder.encode(userDTO.getUserPassword());
+		userDTO.setUserPassword(pass);
 
-		return convertToDTO(savedUser);
+		User savedUser = userRepository.save(convertToEntity(userDTO));
+		userDTO.setUserId(savedUser.getUserId());
 
-	}
+		// Store in Redis before saving to DB for caching purposes
+		redisTemplate.opsForHash().put(KEY, String.valueOf(userDTO.getUserId()), userDTO);
+		redisTemplate.opsForValue().set(savedUser.getUserEmail(), String.valueOf(savedUser.getUserId()));
 
-	@Override
-	public UserDTO getUser(long userId) {
-		User savedUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("user not found!"));
 
-		return convertToDTO(savedUser);
-	}
 
-	@Override
-	public List<UserDTO> getAllUser() {
-		List<User> users = userRepository.findAll();
-		List<UserDTO> userDTO = new ArrayList<>();
-
-		users.forEach(user -> {
-
-			userDTO.add(convertToDTO(user));
-
-		});
 		return userDTO;
 	}
 
 	@Override
-	public boolean deleteUser(long userId) {
-		userRepository.deleteById(userId);
-		return true;
+	public UserDTO getUser(long userId) {
+		UserDTO user = (UserDTO) redisTemplate.opsForHash().get(KEY, String.valueOf(userId));
+
+		if (user != null) {
+			System.out.print("fethed form Redis");
+			return user;
+		} else {
+			User savedUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found!"));
+
+			UserDTO userDTO = convertToDTO(savedUser);
+
+			// No need for Hibernate.initialize(userDTO.getUserRole()) here
+
+			redisTemplate.opsForHash().put(KEY, String.valueOf(userDTO.getUserId()), userDTO);
+			redisTemplate.opsForValue().set(userDTO.getUserEmail(), String.valueOf(userDTO.getUserId()));
+
+			System.out.print("fethed form DB");
+			return userDTO;
+		}
 	}
 
 	@Override
-	public UserDTO updateUser(long userId, UserDTO userDTO) {
+	public List<UserDTO> getAllUser() {
+		List<Object> usersInCache = redisTemplate.opsForHash().values(KEY);
 
-		return null;
+		// Check if cache is populated
+		if (usersInCache != null && !usersInCache.isEmpty()) {
+			System.out.print("fethed form Redis");
+			return usersInCache.stream().filter(Objects::nonNull).map(obj -> (UserDTO) obj)
+					.collect(Collectors.toList());
+		}
+
+		// Fallback to DB if cache is empty
+		List<User> users = userRepository.findAll();
+
+		List<UserDTO> userDTOList = new ArrayList<>();
+		users.forEach(user -> {
+			// Ensure roles are initialized if lazy
+			//Hibernate.initialize(user.getUserRole());
+
+			UserDTO userDTO = convertToDTO(user);
+			userDTOList.add(userDTO);
+
+			// Store in Redis cache
+			redisTemplate.opsForHash().put(KEY, String.valueOf(userDTO.getUserId()), userDTO);
+			redisTemplate.opsForValue().set(userDTO.getUserEmail(), String.valueOf(userDTO.getUserId()));
+		});
+
+		System.out.print("fethed form DB");
+
+		return userDTOList;
+	}
+
+	@Override
+	public String deleteUser(long userId) {
+		User dbUser = userRepository.findById(userId)
+				.orElseThrow(() -> new UserNotFoundException("User not Found with id: " + userId));
+
+		redisTemplate.opsForHash().delete(KEY, String.valueOf(userId));
+		userRepository.deleteById(userId);
+
+		return "User: " + userId + " successfully deleted";
+	}
+
+	@Override
+	public UserDTO updateUser(long userId, UserDTO modifiedUserDTO) {
+		User dbUser = userRepository.findById(userId)
+				.orElseThrow(() -> new UserNotFoundException("User not Found with id: " + userId));
+
+		String pass = bCryptPasswordEncoder.encode(modifiedUserDTO.getUserPassword());
+		modifiedUserDTO.setUserId(dbUser.getUserId());
+		modifiedUserDTO.setUserPassword(pass);
+
+		redisTemplate.opsForHash().delete(KEY, String.valueOf(modifiedUserDTO.getUserId()));
+		redisTemplate.opsForHash().put(KEY, String.valueOf(modifiedUserDTO.getUserId()), modifiedUserDTO);
+		redisTemplate.opsForValue().set(modifiedUserDTO.getUserEmail(), String.valueOf(modifiedUserDTO.getUserId()));
+
+
+
+		User savedUser = userRepository.save(convertToEntity(modifiedUserDTO));
+
+		return convertToDTO(savedUser);
 	}
 
 	@Override
 	public String findByUserEmail(LoginRequestDTO loginRequestDTO) {
 
-		Authentication authenticate = authenticationManager.authenticate(
+		String userId = (String) redisTemplate.opsForValue().get(loginRequestDTO.getUserEmail());
+		UserDTO redisUser = (UserDTO) redisTemplate.opsForHash().get(KEY, String.valueOf(userId));
 
-				new UsernamePasswordAuthenticationToken(loginRequestDTO.getUserEmail(),
-						loginRequestDTO.getUserPassword())
+		if (redisUser != null) {
+			boolean status = bCryptPasswordEncoder.matches(loginRequestDTO.getUserPassword(),
+					redisUser.getUserPassword());
 
-		);
-
-//		User user = userRepository.findByUserEmail(loginRequestDTO.getUserEmail());
-		if (authenticate.isAuthenticated()) {
-			
-			
-			return jwtService.generateToken(loginRequestDTO);
+			if (status) {
+				return redisUser.getUserName() + ", login successful from Redis";
+			} else {
+				return "Password does not match";
+			}
 		}
-		return "failure";
-	}
+		User user =  userRepository.findByUserEmail(loginRequestDTO.getUserEmail());
+		UserDTO useDTO = convertToDTO(user);
 
+
+		boolean status = bCryptPasswordEncoder.matches(loginRequestDTO.getUserPassword(), useDTO.getUserPassword());
+
+		if (status) {
+
+			redisTemplate.opsForHash().put(KEY, String.valueOf(useDTO.getUserId()), useDTO);
+			redisTemplate.opsForValue().set(useDTO.getUserEmail(), String.valueOf(useDTO.getUserId()));
+
+			return useDTO.getUserName() + ", login successful from DB";
+		} else {
+			return "Password does not match";
+		}
+
+		// Uncommented code (authentication using JWT)
+		/*
+		 * Authentication authenticate = authenticationManager.authenticate( new
+		 * UsernamePasswordAuthenticationToken(loginRequestDTO.getUserEmail(),
+		 * loginRequestDTO.getUserPassword()) );
+		 *
+		 * if (authenticate.isAuthenticated()) { return
+		 * jwtService.generateToken(loginRequestDTO); } return "failure";
+		 */
+	}
 }

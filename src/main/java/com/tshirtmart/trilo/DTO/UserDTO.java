@@ -1,132 +1,116 @@
 package com.tshirtmart.trilo.DTO;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.FetchType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
 
+public class UserDTO implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 
-public class UserDTO {
-	
 	private long userId;
-	
-	@NotBlank(message = "username cannot be null")
-	private String userName;
-	
-	
-	@Email(message = "Invalid Email")
-	@NotBlank(message = "email must be filled")
-	private String userEmail;
-	
-	@NotBlank
-	@Length(min = 6,message = "Password length should be at leaset 6")
-	private String userPassword;
-	
-	@NotEmpty(message = "Please select a userRole")
-	private List<String> userRole;
-	
-	@Pattern(regexp = "^(?:\\+8801|8801|01)[3-9]\\d{8}$", message = "Invalid Bangladeshi phone number format")
-	private String userPhone;
-	
-	@NotBlank(message = "user address cannot be empty")
-	private String userAddress;
-	
 
-	public UserDTO() {
-		super();
-	}
+    @NotBlank(message = "username cannot be null")
+    private String userName;
 
+    @Email(message = "Invalid Email")
+    @NotBlank(message = "email must be filled")
+    private String userEmail;
 
-	public UserDTO(long userId, @NotBlank(message = "username cannot be null") String userName,
-			@Email(message = "Invalid Email") @NotBlank(message = "email must be filled") String userEmail,
-			@NotBlank @Length(min = 6, message = "Password length should be at leaset 6") String userPassword,
-			@NotBlank(message = "Please select a userRole") List<String> userRole,
-			@Pattern(regexp = "^(?:\\+8801|8801|01)[3-9]\\d{8}$", message = "Invalid Bangladeshi phone number format") String userPhone,
-			@NotBlank(message = "user address cannot be empty") String userAddress) {
-		super();
-		this.userId = userId;
-		this.userName = userName;
-		this.userEmail = userEmail;
-		this.userPassword = userPassword;
-		this.userRole = userRole;
-		this.userPhone = userPhone;
-		this.userAddress = userAddress;
-	}
+    @NotBlank
+    @Length(min = 6, message = "Password length should be at leaset 6")
+    private String userPassword;
 
-	public String getUserName() {
-		return userName;
-	}
-	
-	public long getUserId() {
-		return userId;
-	}
+    @NotEmpty(message = "Please select a userRole")
+    private List<String> userRole;
 
+    @Pattern(regexp = "^(?:\\+8801|8801|01)[3-9]\\d{8}$", message = "Invalid Bangladeshi phone number format")
+    private String userPhone;
 
-	public String getUserEmail() {
-		return userEmail;
-	}
+    @NotBlank(message = "user address cannot be empty")
+    private String userAddress;
 
+    public UserDTO() {
+        super();
+    }
 
-	public String getUserPassword() {
-		return userPassword;
-	}
+    public UserDTO(long userId, String userName, String userEmail, String userPassword, List<String> userRole,
+                   String userPhone, String userAddress) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
+        this.userRole = userRole;
+        this.userPhone = userPhone;
+        this.userAddress = userAddress;
+    }
 
+    public long getUserId() {
+        return userId;
+    }
 
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
 
-	public String getUserPhone() {
-		return userPhone;
-	}
+    public String getUserName() {
+        return userName;
+    }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
+    public String getUserEmail() {
+        return userEmail;
+    }
 
-	public String getUserAddress() {
-		return userAddress;
-	}
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
+    public String getUserPassword() {
+        return userPassword;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
 
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
+    public List<String> getUserRole() {
+        return userRole;
+    }
 
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
-	}
+    public void setUserRole(List<String> userRole) {
+        this.userRole = userRole;
+    }
 
-	public void setUserPhone(String userPhone) {
-		this.userPhone = userPhone;
-	}
+    public String getUserPhone() {
+        return userPhone;
+    }
 
-	public void setUserAddress(String userAddress) {
-		this.userAddress = userAddress;
-	}
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
+    }
 
+    public String getUserAddress() {
+        return userAddress;
+    }
 
-	public List<String> getUserRole() {
-		return userRole;
-	}
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
+    }
 
-
-	public void setUserRole(List<String> userRole) {
-		this.userRole = userRole;
-	}
-	
-	
-	
-
-
+    @Override
+    public String toString() {
+        return "UserDTO [userId=" + userId + ", userName=" + userName + ", userEmail=" + userEmail + ", userPassword="
+                + userPassword + ", userRole=" + userRole + ", userPhone=" + userPhone + ", userAddress=" + userAddress
+                + "]";
+    }
 }

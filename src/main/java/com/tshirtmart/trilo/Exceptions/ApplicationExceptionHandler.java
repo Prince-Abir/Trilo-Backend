@@ -16,7 +16,7 @@ public class ApplicationExceptionHandler extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	
+
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public static Map<String, String> invalidExceptionHandler(MethodArgumentNotValidException exception) {
@@ -32,17 +32,31 @@ public class ApplicationExceptionHandler extends Exception {
 		return errors;
 
 	}
-	
+
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public Map<String,String> DuplicateEmailException(DataIntegrityViolationException ex){
-		
+
 		Map<String, String> errors = new HashMap<>();
-	
+
 		errors.put("Duplicate Entry","Email is Already Registered!");
 
 		return errors;
-		
-		
+
+
+	}
+
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(UserNotFoundException.class)
+	public Map<String,String> userNotFound(UserNotFoundException ex){
+
+		Map<String, String> errors = new HashMap<>();
+
+		errors.put("error1",ex.getMessage());
+
+		return errors;
+
+
 	}
 }

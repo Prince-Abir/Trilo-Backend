@@ -1,7 +1,7 @@
 package com.tshirtmart.trilo.Entities;
 
  public class LoginRequest {
-	 
+
     private String userEmail;
     private String userPassword;
 
@@ -36,6 +36,6 @@ package com.tshirtmart.trilo.Entities;
 	public String toString() {
 		return "LoginRequest [userEmail=" + userEmail + ", userPassword=" + userPassword + "]";
 	}
-    
-    
+
+
 }

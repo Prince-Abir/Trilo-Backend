@@ -1,8 +1,11 @@
 package com.tshirtmart.trilo.DTO;
 
- public class LoginRequestDTO {
-	 
-    private String userEmail;
+import java.io.Serializable;
+
+public class LoginRequestDTO implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	private String userEmail;
     private String userPassword;
 
     public LoginRequestDTO() {
@@ -36,6 +39,6 @@ package com.tshirtmart.trilo.DTO;
 	public String toString() {
 		return "LoginRequest [userEmail=" + userEmail + ", userPassword=" + userPassword + "]";
 	}
-    
-    
+
+
 }

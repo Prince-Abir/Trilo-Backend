@@ -3,7 +3,6 @@ package com.tshirtmart.trilo;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,12 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.tshirtmart.trilo.Entities.User;
 
 public class CustomUserDetails implements UserDetails {
-	
-	
+
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private final User user;
-	
+
 
 	public CustomUserDetails(User user) {
 		super();
@@ -28,14 +27,14 @@ public class CustomUserDetails implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<String> userRole = user.getUserRole();
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		
+
 		userRole.forEach(role ->{
 			authorities.add(new SimpleGrantedAuthority(role));
 		});
-		
+
 		return authorities;
 	}
-	
+
 
 	@Override
 	public String getPassword() {

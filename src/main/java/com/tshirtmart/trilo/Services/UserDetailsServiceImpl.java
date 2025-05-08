@@ -3,8 +3,6 @@ package com.tshirtmart.trilo.Services;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 //			.password(user.getUserPassword())
 //			.roles(user.getUserRole().toArray(new String[0]))
 //			.build();
-//			
+//
 //			return userDetails;
 
 			System.out.println("User not found!");
