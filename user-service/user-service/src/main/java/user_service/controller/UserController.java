@@ -16,7 +16,7 @@ import user_service.dto.UserDTO;
 import user_service.serviceImpl.UserServiceImpl;
 
 @RestController
-@RequestMapping("/trilo")
+@RequestMapping("/trilo/user")
 @CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 
