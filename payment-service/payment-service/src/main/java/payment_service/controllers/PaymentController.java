@@ -1,5 +1,7 @@
 package payment_service.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +30,28 @@ public class PaymentController {
 	}
 
 	@GetMapping("/{paymentId}")
-	public Payment getPaymentDetailsById(long paymentId) {
+	public Payment getPaymentDetailsById(@PathVariable long paymentId) {
 
 		return paymentService.getPaymentDetailsById(paymentId);
 
 	}
+	
+	@GetMapping
+	public List<Payment> getAllPaymets() {
+
+		return paymentService.getAllPayments();
+
+	}
+	
+	
+	
+	@GetMapping("/user/{userId}")
+	public List<Payment> getPaymentDetailsByUserId(@PathVariable long userId) {
+
+		return paymentService.getPaymentDetailsByUserId(userId);
+
+	}
+
 
 	@PutMapping("/{paymentId}")
 	public Payment updatePayment(@RequestBody Payment newPayment, @PathVariable long paymentId) {
@@ -42,7 +61,7 @@ public class PaymentController {
 	}
 
 	@DeleteMapping("/{paymentId}")
-	public String deletePayment(long paymentId) {
+	public String deletePayment(@PathVariable long paymentId) {
 
 		return paymentService.deletePayment(paymentId);
 

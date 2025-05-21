@@ -1,5 +1,7 @@
 package cart_service.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +11,7 @@ import cart_service.entities.Cart;
 public interface CartRepository extends JpaRepository<Cart, Long>{
 	
 	
-	Cart findByUserId(long userId);
+	List<Cart> findByUserId(long userId);
 	
 
 }

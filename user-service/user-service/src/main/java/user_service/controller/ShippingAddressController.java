@@ -1,4 +1,4 @@
-package shipping_service.controller;
+package user_service.controller;
 
 import java.util.List;
 
@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import shipping_service.entities.ShippingAddress;
-import shipping_service.services.ShippingAddressService;
+import user_service.entities.ShippingAddress;
+import user_service.serviceImpl.ShippingAddressService;
+
 
 @RestController
-@RequestMapping(path = "/shipping")
+@RequestMapping(path = "/trilo/shipping")
 public class ShippingAddressController {
 
 	@Autowired
@@ -34,6 +35,13 @@ public class ShippingAddressController {
 		return shippingAddressService.getShippingAddress(addressId);
 
 	}
+	
+	@GetMapping("/user/{userId}")
+	public List<ShippingAddress> getShippingAddressByUserId(@PathVariable long userId) {
+		return shippingAddressService.getShippingAddressByUserId(userId);
+
+	}
+
 
 	@GetMapping
 	public List<ShippingAddress> getAllShippingAddress() {

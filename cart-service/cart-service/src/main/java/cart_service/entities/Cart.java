@@ -31,6 +31,8 @@ public class Cart {
 	
 	private double totalAmount;
 	
+	private String cartStatus;
+	
 	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference
 	private List<CartItem> cartItems = new ArrayList<>();

@@ -28,7 +28,7 @@ public class CartController {
 	@PostMapping
 	public Cart addtoCart(@RequestBody AddToCartRequest cart) {
 
-		return cartService.addtoCart(cart);
+		return cartService.addToCart(cart);
 
 	}
 
@@ -36,6 +36,12 @@ public class CartController {
 	public Cart getCart(@PathVariable long cartId) {
 
 		return cartService.getCart(cartId);
+	}
+	
+	@GetMapping("/user/{userId}")
+	public List<Cart> getCartsByUserId(@PathVariable long userId) {
+
+		return cartService.getCartByUserId(userId);
 	}
 
 	@GetMapping("/carts")

@@ -1,5 +1,6 @@
 package cart_service.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,70 +23,84 @@ public class CartService {
 	@Autowired
 	private ProductVariantClient productVariantClient;
 
-	private double totalAmount;
+	public Cart addToCart(AddToCartRequest cartItem) {
+		double totalAmount = 0.0;
 
-	public Cart addtoCart(AddToCartRequest cartItem) {
-
-		Cart cart = cartRepository.findByUserId(cartItem.getUserId());
-
-		if (cart == null) {
-
-			cart = new Cart();
-			cart.setUserId(cartItem.getUserId());
-
-		}
-
+		List<Cart> carts = cartRepository.findByUserId(cartItem.getUserId());
 		ProductVariantDto variant = productVariantClient.getProductVariant(cartItem.getProductVariantId());
 
+		cartItem.setPrice(variant.getPrice());
+		
 		if (cartItem.getQuantity() > variant.getQuantity()) {
-
-			throw new RuntimeException("Sorry, this product not avaible! " + cartItem.getItemName());
-
+			throw new RuntimeException("Sorry, this product is not available! " + cartItem.getItemName());
 		}
 
-		Optional<CartItem> existingItem = cart.getCartItems().stream()
-				.filter(i -> i.getProductVariantId() == cartItem.getProductVariantId()).findFirst();
-		if (existingItem.isPresent()) {
-			
-			 CartItem item = existingItem.get();
+		// Look for an ACTIVE cart
+		for (Cart cart : carts) {
+			if ("ACTIVE".equalsIgnoreCase(cart.getCartStatus())) {
+				Optional<CartItem> existingItem = cart.getCartItems().stream()
+						.filter(i -> i.getProductVariantId() == cartItem.getProductVariantId()).findFirst();
 
-			int newQuantity = cartItem.getQuantity() + item.getQuantity();
+				if (existingItem.isPresent()) {
+					// Update quantity and subtotal
+					CartItem existingCartItem = existingItem.get();
+					int newQuantity = cartItem.getQuantity() + existingCartItem.getQuantity();
 
-			if (newQuantity > variant.getQuantity()) {
-				throw new RuntimeException("Sorry, this product not avaible! " + cartItem.getItemName());
+					if (newQuantity > variant.getQuantity()) {
+						throw new RuntimeException("Sorry, this product is not available! " + cartItem.getItemName());
+					}
+
+					double subTotal = newQuantity * variant.getPrice();
+					existingCartItem.setQuantity(newQuantity);
+					existingCartItem.setSubTotal(subTotal);
+				} else {
+					// Add new item
+					CartItem item = new CartItem();
+					item.setItemName(cartItem.getItemName());
+					item.setColor(cartItem.getColor());
+					item.setItemImageUrl(cartItem.getItemImageUrl());
+					item.setPrice(variant.getPrice());
+					item.setProductVariantId(cartItem.getProductVariantId());
+					item.setQuantity(cartItem.getQuantity());
+					item.setSize(cartItem.getSize());
+					item.setSubTotal(variant.getPrice() * cartItem.getQuantity());
+					item.setCart(cart);
+
+					cart.getCartItems().add(item);
+				}
+
+				// Recalculate total
+				totalAmount = cart.getCartItems().stream().mapToDouble(CartItem::getSubTotal).sum();
+				cart.setTotalAmount(totalAmount);
+				cart.setCartStatus("ACTIVE");
+
+				return cartRepository.save(cart);
 			}
-
-			double subTotal = newQuantity * cartItem.getPrice();
-			item.setQuantity(newQuantity);
-			item.setSubTotal(subTotal);
-
-		} else {
-
-
-			CartItem newItem = new CartItem();
-
-			newItem.setColor(cartItem.getColor());
-			newItem.setItemName(cartItem.getItemName());
-			newItem.setItemImageUrl(cartItem.getItemImageUrl());
-			newItem.setQuantity(cartItem.getQuantity());
-			newItem.setPrice(cartItem.getPrice());
-			newItem.setProductVariantId(cartItem.getProductVariantId());
-			newItem.setSize(cartItem.getSize());
-			newItem.setSubTotal(cartItem.getPrice() * cartItem.getQuantity());
-			newItem.setCart(cart);
-
-			cart.getCartItems().add(newItem);
-
 		}
 
-		double toatalAmount = cart.getCartItems().stream().mapToDouble(CartItem::getSubTotal).sum();
-		cart.setTotalAmount(toatalAmount);
+		// No active cart found – create new one
+		Cart newCart = new Cart();
+		newCart.setUserId(cartItem.getUserId());
+		newCart.setCartStatus("ACTIVE");
 
-		return cartRepository.save(cart);
+		CartItem item = new CartItem();
+		item.setItemName(cartItem.getItemName());
+		item.setColor(cartItem.getColor());
+		item.setItemImageUrl(cartItem.getItemImageUrl());
+		item.setPrice(variant.getPrice());
+		item.setProductVariantId(cartItem.getProductVariantId());
+		item.setQuantity(cartItem.getQuantity());
+		item.setSize(cartItem.getSize());
+		item.setSubTotal(variant.getPrice() * cartItem.getQuantity());
+		item.setCart(newCart);
 
+		List<CartItem> cartItems = new ArrayList<>();
+		cartItems.add(item);
+		newCart.setCartItems(cartItems);
+		newCart.setTotalAmount(cartItem.getPrice() * cartItem.getQuantity());
+
+		return cartRepository.save(newCart);
 	}
-	
-	
 
 	public Cart getCart(long cartId) {
 
@@ -99,18 +114,17 @@ public class CartService {
 
 	public Cart updateCart(Cart newCart, long cartId) {
 
+		double totalAmount = 0;
+
 		Cart dbCart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Cart Not Found!!"));
 
 		newCart.setCart_id(dbCart.getCart_id());
 
-		newCart.getCartItems().forEach(item -> {
-
+		for (CartItem item : newCart.getCartItems()) {
 			double total = item.getPrice() * item.getQuantity();
 			item.setSubTotal(total);
-
 			totalAmount += total;
-
-		});
+		}
 
 		newCart.setTotalAmount(totalAmount);
 		totalAmount = 0;
@@ -125,6 +139,12 @@ public class CartService {
 
 		cartRepository.delete(dbCart);
 		return true;
+
+	}
+
+	public List<Cart> getCartByUserId(long userId) {
+
+		return cartRepository.findByUserId(userId);
 
 	}
 

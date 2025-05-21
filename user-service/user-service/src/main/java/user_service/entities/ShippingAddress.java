@@ -1,4 +1,4 @@
-package shipping_service.entities;
+package user_service.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

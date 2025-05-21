@@ -1,13 +1,13 @@
-package shipping_service.services;
+package user_service.serviceImpl;
 
 import java.util.List;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import shipping_service.entities.ShippingAddress;
-import shipping_service.repository.ShippingAddressRepository;
+import user_service.entities.ShippingAddress;
+import user_service.exceptions.UserNotFoundException;
+import user_service.repository.ShippingAddressRepository;
 
 @Service
 public class ShippingAddressService {
@@ -17,7 +17,13 @@ public class ShippingAddressService {
 
 	public ShippingAddress addShippingAddress(ShippingAddress address) {
 
-		return shippingAddressRepository.save(address);
+		List<ShippingAddress> dbAddress = shippingAddressRepository.findByUserId(address.getUserId());
+
+		if (dbAddress.isEmpty()) {
+			return shippingAddressRepository.save(address);
+		} else {
+			throw new UserNotFoundException("Shipping Address found!");
+		}
 
 	}
 
@@ -61,6 +67,13 @@ public class ShippingAddressService {
 		}
 		return false;
 
+	}
+
+	public List<ShippingAddress> getShippingAddressByUserId(long userId) {
+
+		List<ShippingAddress> address = shippingAddressRepository.findByUserId(userId);
+
+		return address;
 	}
 
 }
