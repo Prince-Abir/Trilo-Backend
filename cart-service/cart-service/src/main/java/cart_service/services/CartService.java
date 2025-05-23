@@ -97,7 +97,7 @@ public class CartService {
 		List<CartItem> cartItems = new ArrayList<>();
 		cartItems.add(item);
 		newCart.setCartItems(cartItems);
-		newCart.setTotalAmount(cartItem.getPrice() * cartItem.getQuantity());
+		newCart.setTotalAmount(variant.getPrice() * cartItem.getQuantity());
 
 		return cartRepository.save(newCart);
 	}

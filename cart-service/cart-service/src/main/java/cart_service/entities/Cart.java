@@ -33,7 +33,7 @@ public class Cart {
 	
 	private String cartStatus;
 	
-	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JsonManagedReference
 	private List<CartItem> cartItems = new ArrayList<>();
 	

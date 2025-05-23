@@ -1,4 +1,4 @@
-package payment_service.dto;
+package com.orderService.dto;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,8 +32,6 @@ public class OrderItemDto {
 	private Color color; // White, Black, Green
 
 	private double price;
-	
-	private String imageUrl;
 
 	private double subTotal;
 
