@@ -1,23 +1,16 @@
-package shipping_service.entities;
+package shipping_service.dto;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @NoArgsConstructor
-@Table(name = "shipping_orders")
-public class ShippingOrder {
-
+public class ShippingRequest {
+		
 	public static enum Carrier {
 
 		PATHAO, UBER, STEADFAST, LOCAL, PERSONAL
@@ -32,10 +25,6 @@ public class ShippingOrder {
 
 		IN_DHAKA, OUT_DHAKA
 	}
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long shipmentId;
 
 	private Long orderId; // From Order Service
 
@@ -57,5 +46,6 @@ public class ShippingOrder {
 	private LocalDate shippedAt;
 
 	private LocalDate deliveredAt;
+
 
 }

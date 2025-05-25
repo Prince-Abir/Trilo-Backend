@@ -69,4 +69,10 @@ public class PaymentService {
 		return paymentRepository.findAll();
 	}
 
+	public Payment getPaymentDetailsByOrderId(long orderId) {
+		
+		return paymentRepository.findByOrderId(orderId);
+		
+	}
+
 }

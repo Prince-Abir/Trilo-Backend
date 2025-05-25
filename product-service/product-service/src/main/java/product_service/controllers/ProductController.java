@@ -17,7 +17,7 @@ import product_service.dto.ProductVariantDto;
 import product_service.services.ProductServiceImpl;
 
 @RestController
-@RequestMapping("/trilo/product")
+@RequestMapping("/trilo/products")
 public class ProductController {
 
 	@Autowired

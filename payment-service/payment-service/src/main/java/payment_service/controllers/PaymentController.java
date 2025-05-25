@@ -51,6 +51,13 @@ public class PaymentController {
 		return paymentService.getPaymentDetailsByUserId(userId);
 
 	}
+	
+	@GetMapping("/order/{orderId}")
+	public Payment getPaymentDetailsByOrderId(@PathVariable long orderId) {
+
+		return paymentService.getPaymentDetailsByOrderId(orderId);
+
+	}
 
 
 	@PutMapping("/{paymentId}")

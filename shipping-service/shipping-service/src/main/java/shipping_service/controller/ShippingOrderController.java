@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import shipping_service.entities.ShippingOrder;
+import shipping_service.dto.ShippingOrderDto;
+import shipping_service.dto.ShippingRequest;
 import shipping_service.services.ShippingOrderService;
 
 @RestController
@@ -23,26 +24,27 @@ public class ShippingOrderController {
 	private ShippingOrderService shippingOrderService;
 
 	@PostMapping
-	public ShippingOrder addShippingOrder(@RequestBody ShippingOrder order) {
+	public ShippingOrderDto addShippingOrder(@RequestBody ShippingRequest order) {
 		return shippingOrderService.addShippingOrder(order);
 
 	}
 
 	@GetMapping("/{shippingOrderId}")
-	public ShippingOrder getShippingOrder(@PathVariable long shippingOrderId) {
+	public ShippingOrderDto getShippingOrder(@PathVariable long shippingOrderId) {
 		return shippingOrderService.getShippingOrder(shippingOrderId);
 
 	}
 
 	@GetMapping
-	public List<ShippingOrder> getAllShippingOrders() {
+	public List<ShippingOrderDto> getAllShippingOrders() {
 
 		return shippingOrderService.getAllShippingOrders();
 
 	}
 
 	@PutMapping("/{shippingOrderId}")
-	public ShippingOrder updateShippingOrder(@RequestBody ShippingOrder newOrder, @PathVariable long shippingOrderId) {
+	public ShippingOrderDto updateShippingOrder(@RequestBody ShippingRequest newOrder,
+			@PathVariable long shippingOrderId) {
 
 		return shippingOrderService.updateShippingOrder(newOrder, shippingOrderId);
 

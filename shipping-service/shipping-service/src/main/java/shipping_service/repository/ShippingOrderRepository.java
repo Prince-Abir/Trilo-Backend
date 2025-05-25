@@ -8,6 +8,9 @@ import shipping_service.entities.ShippingOrder;
 
 @Repository
 public interface ShippingOrderRepository extends JpaRepository<ShippingOrder, Long>{
+
+	ShippingOrder findByTrackingNumber(String trackingNumber);
+	
 	
 
 }
